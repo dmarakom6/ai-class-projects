@@ -2,7 +2,11 @@
 # Othello (Reversi) engine.
 # Read ARCHITECTURE.md
 #
-# TODO: Engine (implement flips()) A-B Minimax Solver (in a new function here called `minimax`), Bridge with TUI, Test Drive, Docs.
+# TODO: Engine (implement flips()),
+# A-B Minimax Solver (in a new function here called `minimax`),
+# Bridge with TUI,
+# Test Drive,
+# Docs.
 
 """The rules of Othello (Reversi), and nothing else."""
 

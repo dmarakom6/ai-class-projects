@@ -12,6 +12,8 @@ Run it with::
     python -m othello_tui.app        # or: othello-tui
 """
 
+# TODO: Choose who plays first, Bridge with Engine
+
 from __future__ import annotations
 
 from typing import Final
