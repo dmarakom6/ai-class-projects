@@ -20,4 +20,4 @@ class Board:
 
     def placeDisk(self,posX,posY,diskColor):
         if( 1 <= posX <= self.boardWidth and 1 <= posY <= self.boardHeight):
-            self.arrayBoard[posX][posY].setDiskColor(diskColor)
+            self.arrayBoard[posX-1][posY-1].setDiskColor(diskColor)
