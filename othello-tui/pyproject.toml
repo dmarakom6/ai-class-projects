@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "othello-tui"
+version = "0.1.0"
+description = "Textual interface for an Othello (Reversi) game simulation - 8x8 grid, UI only for now."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["textual>=8.0"]
+
+[project.scripts]
+othello-tui = "othello_tui.app:run"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/othello_tui"]
