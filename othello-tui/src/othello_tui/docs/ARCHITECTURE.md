@@ -11,17 +11,20 @@ othello-tui/
 ├── pyproject.toml                 # packaging and the console script
 ├── uv.lock                        # pinned dependencies
 ├── ARCHITECTURE.md                # this document
+├── scratch/                       # the first Node/Board/main sketch, kept for reference
 └── src/othello_tui/
     ├── demo.py                    # game state fixtures (the "position")
+    ├── engine.py                  # the rules: legal moves, captures, passing (no Textual)
     ├── app.py                     # widgets, screen, interaction
     └── app.tcss                   # Textual CSS (layout + monochrome theme)
 ```
 
-Three layers, with strictly one job each:
+Layers, with strictly one job each:
 
 | Layer | File | Responsibility |
 | --- | --- | --- |
 | Data | `demo.py` | The position: board, whose turn, legal squares, HUD numbers |
+| Rules | `engine.py` | Legal moves, captures, passing, game over (no Textual) |
 | Behaviour | `app.py` | Widgets, events, actions; *reads the position and paints it* |
 | Presentation | `app.tcss` | Where things go and how they look (black/white/grey only) |
 
