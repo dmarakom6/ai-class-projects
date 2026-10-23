@@ -67,8 +67,8 @@ def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[
         if(board[r][col] == EMPTY): # if you see empty node stop the search, we can't flip disks
             break
         if(board[r][col] == piece): # if you see node which has a disc of same color, you managed to flip disks
-            for i in range(row-1,r+1):
-                tuplesList.append(tuple(i,col))
+            for i in range(row-1,r): # we found the (x,y) position which is the end of the desired path
+                tuplesList.append(tuple(i,col)) # so we reverse every disc between the (row,col) and the (r,col)
             break
         r -= 1 # decrease r by 1, go on your top neighbour
 
@@ -77,7 +77,7 @@ def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[
         if(board[r][col] == EMPTY):
             break
         if(board[r][col] == piece):
-            for i in range(row+ 1,r+1):
+            for i in range(row + 1,r):
                 tuplesList.append(tuple(i,col))
             break
         r += 1 # increase r by 1, go on your bottom neighbour
@@ -87,7 +87,7 @@ def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[
         if(board[row][c] == EMPTY):
             break
         if(board[row][c] == piece):
-            for i in range(col-1,c+1):
+            for i in range(col-1,c):
                 tuplesList.append(tuple(row,i))
             break
         c -= 1 # decrease r by 1, go on your left neighbour
@@ -97,7 +97,7 @@ def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[
         if(board[row][c] == EMPTY):
             break
         if(board[row][c] == piece):
-            for i in range(col+1,c+1):
+            for i in range(col+1,c):
                 tuplesList.append(tuple(row,i))
             break
         c += 1  # increase r by 1, go on your right neighbour
@@ -110,7 +110,7 @@ def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[
         if(board[r][c] == piece):
             rowN = row - 1
             colN = col - 1
-            while( rowN >= r and colN >= c):
+            while( rowN >= r-1 and colN >= c-1): # we don't need to add (r,c) disk, it's already the desired colour 
                 tuplesList.append(tuple(rowN,colN))
                 rowN -= 1
                 colN -=1
@@ -126,10 +126,11 @@ def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[
         if(board[r][c] == piece):
             rowN = row - 1
             colN = col + 1
-            while( rowN >= r and colN <= c): 
+            while( rowN >= r-1 and colN <= c-1): 
                 tuplesList.append(tuple(rowN,colN))
                 rowN -= 1
                 colN +=1
+            break
         c += 1  # go to right top neighbour
         r -= 1
 
@@ -139,7 +140,12 @@ def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[
         if(board[r][c] == EMPTY):
             break
         if(board[r][c] == piece):
-            directionsList.append(tuple(-1,1))
+            rowN = row + 1
+            colN = col - 1
+            while( rowN <= r-1 and colN >= c-1 ):
+                tuplesList.append(tuple(rowN,colN))
+                rowN += 1
+                colN -= 1
             break
         c -= 1  # go to left bottom neighbour
         r += 1
@@ -150,15 +156,17 @@ def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[
         if(board[r][c] == EMPTY):
             break
         if(board[r][c] == piece):
-            directionsList.append(tuple(1,1))
+            rowN = row + 1
+            colN = col + 1
+            while( rowN <= r-1 and colN <= c-1):
+                tuplesList.append(tupple(rowN,colN))
+                rowN += 1
+                colN += 1
             break
         c += 1  # go to right bottom neighbour
         r += 1   
 
-    return directionsList
-
-
-    
+    return tuplesList
 
 
 
