@@ -6,7 +6,7 @@
 # A-B Minimax Solver (in a new function here called `minimax`),
 # Bridge with TUI,
 # Test Drive,
-# Docs.
+# Docs (PDF with test cases)
 
 """The rules of Othello (Reversi), and nothing else."""
 
