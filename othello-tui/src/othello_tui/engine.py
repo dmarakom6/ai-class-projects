@@ -60,7 +60,93 @@ def opponent(piece: str) -> str:
 
 def flips(board: list[list[str]], row: int, col: int, piece: str) -> list[tuple[int, int]]:
     """Discs captured by playing `piece` at (row, col); empty means illegal."""
-    raise NotImplementedError #todo - the most critical function here
+
+    directionsList = []
+    r = row - 1
+    while ( r >= 0): # check top neighbor path.
+        if(board[r][col] == EMPTY): # if you see empty node stop the search, we can't flip disks
+            break
+        if(board[r][col] == piece): # if you see node which has a disc of same color, you managed to flip disks
+            directionsList.append(tuple(0,-1))
+            break
+        r -= 1 # decrease r by 1, go on your top neighbour
+
+    r = row + 1
+    while ( r <= BOARD_SIZE-1): # check bottom neighbour path
+        if(board[r][col] == EMPTY):
+            break
+        if(board[r][col] == piece):
+            directionsList.append(tuple(0,1))
+            break
+        r += 1 # increase r by 1, go on your bottom neighbour
+
+    c = col - 1
+    while ( c >= 0): # check left neighbour path
+        if(board[row][c] == EMPTY):
+            break
+        if(board[row][c] == piece):
+            directionsList.append(tuple(-1,0))
+            break
+        c -= 1 # decrease r by 1, go on your left neighbour
+
+    c = col + 1
+    while ( c <= BOARD_SIZE-1): # check right neighbour path
+        if(board[row][c] == EMPTY):
+            break
+        if(board[row][c] == piece):
+            directionsList.append(tuple(1,0))
+            break
+        c += 1  # increase r by 1, go on your right neighbour
+
+    r = row - 1
+    c = col - 1
+    while( c >= 0 and r >= 0): # check left top neighbour path
+        if(board[r][c] == EMPTY):
+            break
+        if(board[r][c] == piece):
+            directionsList.append(tuple(-1,-1))
+            break
+        c -= 1  # go to left top neighbour
+        r -= 1
+
+    r = row - 1
+    c = col + 1
+    while( c <= BOARD_SIZE - 1 and r >= 0): # check right top neighbour path
+        if(board[r][c] == EMPTY):
+            break
+        if(board[r][c] == piece):
+            directionsList.append(tuple(1,-1))
+            break
+        c += 1  # go to right top neighbour
+        r -= 1
+
+    r = row + 1
+    c = col - 1
+    while( c >= 0 and r <= BOARD_SIZE-1): # check left bottom neighbour path
+        if(board[r][c] == EMPTY):
+            break
+        if(board[r][c] == piece):
+            directionsList.append(tuple(-1,1))
+            break
+        c -= 1  # go to left bottom neighbour
+        r += 1
+
+    r = row + 1
+    c = col + 1
+    while( c <= BOARD_SIZE-1 and r <= BOARD_SIZE-1): # check right bottom neighbour path
+        if(board[r][c] == EMPTY):
+            break
+        if(board[r][c] == piece):
+            directionsList.append(tuple(1,1))
+            break
+        c += 1  # go to right bottom neighbour
+        r += 1   
+
+    return directionsList
+
+
+    
+
 
 
 class OthelloEngine:
