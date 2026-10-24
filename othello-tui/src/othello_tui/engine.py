@@ -43,7 +43,6 @@ class GameState:
     turn: str
     round_number: int = 1
 
-
 @dataclass(frozen=True)
 class Move:
     """One legal play: where the disc goes and what it captures."""

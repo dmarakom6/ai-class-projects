@@ -12,12 +12,18 @@ Run it with::
     python -m othello_tui.app        # or: othello-tui
 """
 
-# TODO: Choose who plays first, Bridge with Engine
+# TODO:
+# Click/Space to place a disc - DONE
+# Choose who plays first
+# Notify player when opponent must pass
+# Game over screen
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Final
 
+from othello_tui.engine import OthelloEngine
 from rich.text import Text
 from textual import on
 from textual.app import App, ComposeResult
@@ -31,11 +37,7 @@ from textual.widgets import Footer, Static
 from othello_tui.demo import (
     BLACK,
     BOARD_SIZE,
-    START_BOARD,
     START_CURSOR,
-    START_MOVES,
-    START_ROUND,
-    START_TURN,
     TOTAL_ROUNDS,
     EMPTY,
     WHITE,
@@ -57,12 +59,11 @@ DIRECTIONS: Final[dict[str, tuple[int, int]]] = {
 }
 
 DEFAULT_STATUS: Final[str] = (
-    f"{len(START_MOVES)} possible moves are highlighted · "
-    "click a cell to inspect it"
+    "Legal moves are highlighted · click a cell to place a disc"
 )
 
 
-def score_text(board: list[str]) -> Text:
+def score_text(board: list[list[str]]) -> Text:
     """Disc counts drawn with black and white only."""
     return Text.assemble(
         (DISC_GLYPH, "black on white"),
@@ -96,7 +97,7 @@ class BoardCell(Static):
     can_focus = True
 
     class Selected(Message):
-        """Posted when a square is clicked, or activated from the keyboard."""
+        """Posted when a square is clicked."""
 
         def __init__(self, row: int, col: int) -> None:
             super().__init__()
@@ -161,20 +162,21 @@ class OthelloScreen(Screen):
         Binding("down", "move_cursor('down')", "Move down", show=False),
         Binding("left", "move_cursor('left')", "Move left", show=False),
         Binding("right", "move_cursor('right')", "Move right", show=False),
-        Binding("enter,space", "select_cursor", "Inspect cell"),
+        # The footer shows this hint only while the cursor sits on a legal move.
+        Binding("space", "place_disc", "Place disc", show=False),
     ]
 
     def __init__(self) -> None:
         super().__init__()
-        self.board: list[list[str]] = []
-        self.legal_moves: set[tuple[int, int]] = set()
-        self.turn = START_TURN
-        self.round_number = START_ROUND
+        self.engine = OthelloEngine()
+        self.state = self.engine.new_game()
         self.cursor_row, self.cursor_col = START_CURSOR
         self.status_message = DEFAULT_STATUS
+        self._play_hint = False  # is the space hint shown in the footer?
         self._load_opening()
 
     def compose(self) -> ComposeResult:
+        legal = self._legal()
         with Vertical(id="top-chrome"):
             yield Static(
                 "● OTHELLO vs MiniMax",
@@ -184,12 +186,12 @@ class OthelloScreen(Screen):
             with Horizontal(id="hud"):
                 yield StatPanel(
                     "ROUND",
-                    f"{self.round_number:02d} / {TOTAL_ROUNDS:02d}",
+                    f"{self.state.round_number:02d} / {TOTAL_ROUNDS:02d}",
                     id="stat-round",
                 )
-                yield StatPanel("TURN", piece_name(self.turn), id="stat-turn")
-                yield StatPanel("SCORE", score_text(self.board), id="stat-score")
-                yield StatPanel("MOVES", f"{len(self.legal_moves):02d}", id="stat-moves")
+                yield StatPanel("TURN", piece_name(self.state.turn), id="stat-turn")
+                yield StatPanel("SCORE", score_text(self.state.board), id="stat-score")
+                yield StatPanel("MOVES", f"{len(legal):02d}", id="stat-moves")
         with Container(id="stage"):
             yield Board(id="board")
         with Vertical(id="bottom-chrome"):
@@ -204,56 +206,57 @@ class OthelloScreen(Screen):
 
     def _load_opening(self) -> None:
         """Start from the opening position."""
-        self.board = [list(row) for row in START_BOARD]
-        self.legal_moves = set(START_MOVES)
-        self.turn = START_TURN
-        self.round_number = START_ROUND
+        self.state = self.engine.new_game()
         self.cursor_row, self.cursor_col = START_CURSOR
+
+    def _legal(self) -> set[tuple[int, int]]:
+        """Squares the current player may play, as (row, column) pairs."""
+        return {(m.row, m.col) for m in self.engine.legal_moves(self.state)}
 
     # -- painting -----------------------------------------------------------
 
     def _paint(self) -> None:
         """Redraw the board, the HUD and the status line from the game state."""
         cursor = (self.cursor_row, self.cursor_col)
+        legal = self._legal()
         for cell in self.query(BoardCell):
             cell.paint(
-                self.board[cell.row][cell.col],
-                legal=(cell.row, cell.col) in self.legal_moves,
+                self.state.board[cell.row][cell.col],
+                legal=(cell.row, cell.col) in legal,
                 cursor=(cell.row, cell.col) == cursor,
             )
 
         self.query_one("#stat-round", StatPanel).set_value(
-            f"{self.round_number:02d} / {TOTAL_ROUNDS:02d}"
+            f"{self.state.round_number:02d} / {TOTAL_ROUNDS:02d}"
         )
         turn_panel = self.query_one("#stat-turn", StatPanel)
-        turn_panel.set_value(piece_name(self.turn))
-        turn_panel.set_class(self.turn == BLACK, "turn-black")
-        turn_panel.set_class(self.turn == WHITE, "turn-white")
-        self.query_one("#stat-score", StatPanel).set_value(score_text(self.board))
-        self.query_one("#stat-moves", StatPanel).set_value(f"{len(self.legal_moves):02d}")
+        turn_panel.set_value(piece_name(self.state.turn))
+        turn_panel.set_class(self.state.turn == BLACK, "turn-black")
+        turn_panel.set_class(self.state.turn == WHITE, "turn-white")
+        self.query_one("#stat-score", StatPanel).set_value(score_text(self.state.board))
+        self.query_one("#stat-moves", StatPanel).set_value(f"{len(legal):02d}")
 
         self.status_message = self._describe(*cursor)
         self.query_one("#status-line", Static).update(self.status_message)
+        self._sync_play_binding(legal)
 
     def _describe(self, row: int, col: int) -> str:
         """Text describing a square, shown in the status line."""
         label = cell_label(row, col)
-        piece = self.board[row][col]
+        piece = self.state.board[row][col]
         if piece != EMPTY:
             return f"{label} holds a {piece_name(piece).lower()} disc"
-        if (row, col) in self.legal_moves:
-            return (
-                f"{label} is a legal move in the current position · "
-            )
+        if (row, col) in self._legal():
+            return f"{label} is a legal move in the current position"
         return f"{label} is not a legal move in the current position"
 
     # -- interaction --------------------------------------------------------
 
     @on(BoardCell.Selected)
     def _on_cell_selected(self, event: BoardCell.Selected) -> None:
-        """A square was clicked (or activated): move the cursor and report it."""
+        """A square was clicked: move the cursor there and place a disc on it."""
         self.cursor_row, self.cursor_col = event.row, event.col
-        self._paint()
+        self._place_disc(event.row, event.col)
 
     def action_move_cursor(self, direction: str) -> None:
         """Move the keyboard cursor one square in the given direction."""
@@ -262,15 +265,46 @@ class OthelloScreen(Screen):
         self.cursor_col = (self.cursor_col + d_col) % BOARD_SIZE
         self._paint()
 
-    def action_select_cursor(self) -> None:
-        """Report the square under the keyboard cursor."""
+    def action_place_disc(self) -> None:
+        """Place a disc on the square under the keyboard cursor."""
+        self._place_disc(self.cursor_row, self.cursor_col)
+
+    def _place_disc(self, row: int, col: int) -> None:
+        """Play (row, col) for the current player; report illegal attempts."""
+        move = self.engine.find(self.state, row, col)  # calls flips()
+        if move is None:
+            self._paint()
+            self._set_status(f"Illegal move: {cell_label(row, col)} is not playable")
+            return
+        self.state = self.engine.play(self.state, move)  # new state, discs flipped
         self._paint()
+        self._set_status(
+            f"Placed on {cell_label(row, col)} · flipped {len(move.flips)} disc(s)"
+        )
+
+    def _set_status(self, message: str) -> None:
+        """Replace the text shown in the status line."""
+        self.status_message = message
+        self.query_one("#status-line", Static).update(message)
+
+    def _sync_play_binding(self, legal: set[tuple[int, int]]) -> None:
+        """Show the space hint in the footer only over a legal move."""
+        playable = (self.cursor_row, self.cursor_col) in legal
+        if playable == self._play_hint:
+            return
+        for key, bindings in self._bindings.key_to_bindings.items():
+            self._bindings.key_to_bindings[key] = [
+                replace(binding, show=playable) if binding.action == "place_disc" else binding
+                for binding in bindings
+            ]
+        self._play_hint = playable
+        self.refresh_bindings()
 
     def action_reset(self) -> None:
         """Start over: back to the opening position."""
-        self._load_opening()
-        self._paint()
+        self._load_opening() # reset state and cursor pos
         self.status_message = DEFAULT_STATUS
+        self._paint()
         self.query_one("#status-line", Static).update(DEFAULT_STATUS)
 
 

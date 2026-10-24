@@ -24,3 +24,5 @@ starting, so `uv sync` is optional if you only want to play.
 
 If you prefer to create the environment by hand with `uv venv .venv`, uv will
 ask to replace the existing one on every later run. Pass `--clear` to skip that prompt.
+
+Try playing with your cursor.

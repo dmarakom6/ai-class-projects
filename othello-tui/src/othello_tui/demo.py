@@ -23,7 +23,7 @@ COLUMN_LABELS: Final = "abcdefgh"
 
 START_ROUND: Final = 1
 #: A game of Othello lasts at most 60 rounds (60 empty squares at the start).
-TOTAL_ROUNDS: Final = 60
+TOTAL_ROUNDS: Final = 60 # display-only.
 START_TURN: Final = BLACK
 
 #: Where the keyboard cursor starts, as a (row, column) pair.
@@ -44,15 +44,11 @@ START_BOARD: Final[list[str]] = [
     "........",
 ]
 
-#: Squares highlighted as playable from the opening position, (row, column).
-START_MOVES: Final[frozenset[tuple[int, int]]] = frozenset(
-    {
-        (2, 3),  # d3
-        (3, 2),  # c4
-        (4, 5),  # f5
-        (5, 4),  # e6
-    }
-)
+HUMAN: Final = BLACK
+AI: Final = WHITE
+# AI_DEPTH: Final = 4
+
+
 
 
 def cell_label(row: int, col: int) -> str:
@@ -65,6 +61,6 @@ def piece_name(piece: str) -> str:
     return {EMPTY: "Empty", BLACK: "Black", WHITE: "White"}[piece]
 
 
-def count_discs(board: list[str], piece: str) -> int:
+def count_discs(board: list[list[str]], piece: str) -> int:
     """Number of discs of a colour on a board (for the score display)."""
     return sum(row.count(piece) for row in board)

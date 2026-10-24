@@ -65,11 +65,6 @@ START_BOARD: Final[list[str]] = [
     "........",
 ]
 
-#: Squares highlighted as playable, as (row, column) pairs.
-START_MOVES: Final[frozenset[tuple[int, int]]] = frozenset(
-    {(2, 3), (3, 2), (4, 5), (5, 4)}   # d3, c4, f5, e6
-)
-
 START_TURN: Final = BLACK   # black always starts
 START_ROUND: Final = 1
 TOTAL_ROUNDS: Final = 60               # 60 empty squares at the start
