@@ -21,6 +21,7 @@ Run it with::
 from __future__ import annotations
 
 from dataclasses import replace
+from math import inf
 from typing import Final
 
 from othello_tui.engine import OthelloEngine
@@ -50,6 +51,7 @@ from othello_tui.demo import (
 DISC_GLYPH: Final[str] = "●"  # black circle, recoloured per disc colour
 HINT_GLYPH: Final[str] = "○"  # outline of a disc, for a possible move
 BLANK_GLYPH: Final[str] = " "
+
 
 DIRECTIONS: Final[dict[str, tuple[int, int]]] = {
     "up": (-1, 0),
@@ -256,6 +258,7 @@ class OthelloScreen(Screen):
     def _on_cell_selected(self, event: BoardCell.Selected) -> None:
         """A square was clicked: move the cursor there and place a disc on it."""
         self.cursor_row, self.cursor_col = event.row, event.col
+        self._place_disc(*self.engine.minimax(self.engine.__getstate__()))
         self._place_disc(event.row, event.col)
 
     def action_move_cursor(self, direction: str) -> None:
@@ -265,9 +268,10 @@ class OthelloScreen(Screen):
         self.cursor_col = (self.cursor_col + d_col) % BOARD_SIZE
         self._paint()
 
-    def action_place_disc(self) -> None:
-        """Place a disc on the square under the keyboard cursor."""
-        self._place_disc(self.cursor_row, self.cursor_col)
+    # def action_place_disc(self) -> None:
+        # """Place a disc on the square under the keyboard cursor."""
+        # self._place_disc(self.cursor_row, self.cursor_col)
+        # self._place_disc(*self.engine.minimax(a,b, self.engine.__getstate__()))
 
     def _place_disc(self, row: int, col: int) -> None:
         """Play (row, col) for the current player; report illegal attempts."""

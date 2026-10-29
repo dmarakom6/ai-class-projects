@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import inf
 from typing import Final
 
 from othello_tui.demo import (
@@ -42,6 +43,10 @@ class GameState:
     board: list[list[str]]  # 8x8 of "B" / "W" / "."
     turn: str
     round_number: int = 1
+
+    def get_children(self) -> list[GameState]:
+        return [] # TODO
+
 
 @dataclass(frozen=True)
 class Move:
@@ -117,6 +122,21 @@ class OthelloEngine:
             round_number=state.round_number + 1,
         )
 
+    def minimax(self, state: GameState): # TODO along with _max/_min_value methods
+        depth = 5 # for now
+        a,b = inf,-inf
+        if state.turn == "B":
+            return self._max_value(a,b)
+
+        return self._min_value(a,b)
+
+
+
+    def _max_value(self, a,b):
+        pass
+
+    def _min_value(self, a,b):
+        pass
 
     # -- TUI stuff --
 
