@@ -13,6 +13,19 @@ O = -1
 EMPTY = 0
 SYMBOLS = {X: "X", O: "O", EMPTY: "-"}
 
+DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+WEIGHTS: Grid = [
+    [100, -20, 10, 5, 5, 10, -20, 100],
+    [-20, -50, -2, -2, -2, -2, -50, -20],
+    [10, -2, 8, 1, 1, 8, -2, 10],
+    [5, -2, 1, 1, 1, 1, -2, 5],
+    [5, -2, 1, 1, 1, 1, -2, 5],
+    [10, -2, 8, 1, 1, 8, -2, 10],
+    [-20, -50, -2, -2, -2, -2, -50, -20],
+    [100, -20, 10, 5, 5, 10, -20, 100],
+]
+
 
 def starting_grid() -> Grid:
     """The starting position of Othello: four pieces in the centre, each player's two on a diagonal."""
@@ -54,7 +67,16 @@ class Board:
             raise ValueError(f"({row}, {col}) is not on the board; a player with no valid move must pass.")
         self.game_board[row][col] = letter
 
-        # fill in your code here! flip the opponent's pieces that the new piece outflanks.
+        for dr, dc in DIRECTIONS:
+            line = []
+            r, c = row + dr, col + dc
+            while 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == -letter:
+                line.append((r, c))
+                r += dr
+                c += dc
+            if line and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == letter:
+                for flip_row, flip_col in line:
+                    self.game_board[flip_row][flip_col] = letter
         self.last_move = Move(row, col)
         self.last_player = letter
 
@@ -62,26 +84,54 @@ class Board:
         """True if letter may play at (row, col): the square is empty and the move outflanks opponent pieces."""
         is_valid = False
 
-        # fill in your code here!
+        if 0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE and self.game_board[row][col] == EMPTY:
+            for dr, dc in DIRECTIONS:
+                r, c = row + dr, col + dc
+                if not (0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == -letter):
+                    continue
+                r += dr
+                c += dc
+                while 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == -letter:
+                    r += dr
+                    c += dc
+                if 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == letter:
+                    is_valid = True
+                    break
         return is_valid
 
     def get_children(self, letter: int) -> list[Board]:
         """One child board for every valid move of letter."""
         children = []
 
-        # fill in your code here!
+        for row in range(BOARD_SIZE):
+            for col in range(BOARD_SIZE):
+                if self.is_valid_move(row, col, letter):
+                    child = self.copy()
+                    child.make_move(row, col, letter)
+                    children.append(child)
         return children
 
     def evaluate(self) -> int:
         """The heuristic value of the board: positive is good for X (MAX), negative is good for O (MIN)."""
         score = 0
 
-        # fill in your code here!
+        if self.is_terminal():
+            for row in self.game_board:
+                score += sum(row)
+            return score
+        for row in range(BOARD_SIZE):
+            for col in range(BOARD_SIZE):
+                score += WEIGHTS[row][col] * self.game_board[row][col]
         return score
 
     def is_terminal(self) -> bool:
         """The game is over when neither player has a valid move (for example, when the board is full)."""
-        terminal_state = False
+        terminal_state = True
 
-        # fill in your code here!
+        for row in range(BOARD_SIZE):
+            for col in range(BOARD_SIZE):
+                if self.game_board[row][col] == EMPTY:
+                    if self.is_valid_move(row, col, X) or self.is_valid_move(row, col, O):
+                        terminal_state = False
+                        return terminal_state
         return terminal_state

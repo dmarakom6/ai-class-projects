@@ -23,7 +23,60 @@ def main() -> None:
     #   - print the board after every move;
     #   - when the player to move has no valid move, say so and let the other player play;
     #   - say who won when the game is over.
-    pass  # a function needs at least one statement; remove this line once you add your code.
+    while True:
+        answer = input("Maximum search depth: ").split()
+        if len(answer) == 1 and answer[0].isdigit() and int(answer[0]) > 0:
+            max_depth = int(answer[0])
+            break
+        print("Please give a positive number, e.g. 4")
+
+    while True:
+        answer = input("Do you want to play first? (y/n): ").strip().lower()
+        if answer in ("y", "n"):
+            break
+        print("Please answer y or n")
+
+    human_letter = X if answer == "y" else O
+    ai_letter = -human_letter
+    ai = Player(max_depth, ai_letter)
+    board = Board()
+    current = X
+
+    print(f"You play {SYMBOLS[human_letter]}, the computer plays {SYMBOLS[ai_letter]}.")
+    while True:
+        print(board)
+        if board.is_terminal():
+            break
+        if not any(board.is_valid_move(row, col, current) for row in range(BOARD_SIZE) for col in range(BOARD_SIZE)):
+            print(f"{SYMBOLS[current]} has no valid move and must pass.")
+            current = -current
+            continue
+        if current == human_letter:
+            row, col = ask_move(board, current)
+        else:
+            started = time.perf_counter()
+            move = ai.alpha_beta(board)
+            elapsed = time.perf_counter() - started
+            row, col = move.row, move.col
+            print(f"Computer plays {row} {col} (searched {ai.visited_nodes} boards in {elapsed:.2f}s)")
+        board.make_move(row, col, current)
+        current = -current
+
+    x_count = sum(row.count(X) for row in board.game_board)
+    o_count = sum(row.count(O) for row in board.game_board)
+    if x_count > o_count:
+        winner = X
+    elif o_count > x_count:
+        winner = O
+    else:
+        winner = EMPTY
+    print(f"X has {x_count} pieces, O has {o_count} pieces.")
+    if winner == EMPTY:
+        print("The game is a draw.")
+    elif winner == human_letter:
+        print("You win!")
+    else:
+        print("The computer wins!")
 
 
 if __name__ == "__main__":
