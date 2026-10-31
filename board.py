@@ -66,11 +66,11 @@ class Board:
         for directionRow, directionCol in directions: # for each direction we are going to go,
             r = row + directionRow   # go to that direction till you see invalid coordinates, empty space or our letter
             c = col + directionCol # if the search stopped because we found our letter that is a successfull flip
-            while( (0 <= r < BOARD_SIZE and 0 <= c <= BOARD_SIZE) and (self.game_board[r][c] == opponent_letter)):
+            while( (0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE) and (self.game_board[r][c] == opponent_letter)):
                 discsList.append((r,c)) # the candidate discs to be flipped
                 r += directionRow
                 c += directionCol
-            if((0 <= r < BOARD_SIZE and 0 <= c <= BOARD_SIZE) and (self.game_board[r][c] == letter)):
+            if((0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE) and (self.game_board[r][c] == letter)):
                 discsListToFlip.extend(discsList) # we found our letter, we are going to flip them
 
             for coords in discsListToFlip: # flip all the discs we found
@@ -110,7 +110,7 @@ class Board:
                         if( row == r and col == c ):
                             is_neighbour_of_opponent_disc = True
 
-        is_valid = move_outflanks and self.game_board[row][col] == EMPTY and 0 <= r < BOARD_SIZE and 0 <= c <= BOARD_SIZE and is_neighbour_of_opponent_disc  
+        is_valid = move_outflanks and self.game_board[row][col] == EMPTY and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and is_neighbour_of_opponent_disc  
         return is_valid
 
     def get_children(self, letter: int) -> list[Board]:
