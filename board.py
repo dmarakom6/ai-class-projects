@@ -93,10 +93,10 @@ class Board:
         for directionRow, directionCol in directions: # for each direction we are going to go,
             r = row + directionRow   # go to that direction till you see invalid coordinates, empty space or our letter
             c = col + directionCol # if the search stopped because we found our letter that is a successfull flip ( valid move)
-            while( (0 <= r < BOARD_SIZE and 0 <= c <= BOARD_SIZE) and (self.game_board[r][c] == opponent_letter)):
+            while( (0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE) and (self.game_board[r][c] == opponent_letter)):
                 r += directionRow
                 c += directionCol
-            if((0 <= r < BOARD_SIZE and 0 <= c <= BOARD_SIZE) and (self.game_board[r][c] == letter)):
+            if((0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE) and (self.game_board[r][c] == letter)):
                 move_outflanks = True # we do at least 1 flip, its a valid move.
                 break
     
