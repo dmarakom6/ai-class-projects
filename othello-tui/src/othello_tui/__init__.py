@@ -1,1 +1,0 @@
-"""Othello (Reversi) tui"""
