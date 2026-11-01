@@ -23,6 +23,7 @@ def main() -> None:
     #   - print the board after every move;
     #   - when the player to move has no valid move, say so and let the other player play;
     #   - say who won when the game is over.
+    # keep asking until the depth is a positive number
     while True:
         answer = input("Maximum search depth: ").split()
         if len(answer) == 1 and answer[0].isdigit() and int(answer[0]) > 0:
@@ -37,10 +38,10 @@ def main() -> None:
         print("Please answer y or n")
 
     human_letter = X if answer == "y" else O
-    ai_letter = -human_letter
+    ai_letter = -human_letter  # pieces are +1/-1, so negation swaps the two players
     ai = Player(max_depth, ai_letter)
     board = Board()
-    current = X
+    current = X  # X always plays first, whoever plays it
 
     print(f"You play {SYMBOLS[human_letter]}, the computer plays {SYMBOLS[ai_letter]}.")
     while True:
@@ -48,6 +49,7 @@ def main() -> None:
         if board.is_terminal():
             break
         if not any(board.is_valid_move(row, col, current) for row in range(BOARD_SIZE) for col in range(BOARD_SIZE)):
+            # a pass is not a move: no board change, the turn just goes to the other player
             print(f"{SYMBOLS[current]} has no valid move and must pass.")
             current = -current
             continue
@@ -62,6 +64,7 @@ def main() -> None:
         board.make_move(row, col, current)
         current = -current
 
+    # count the pieces to decide the winner
     x_count = sum(row.count(X) for row in board.game_board)
     o_count = sum(row.count(O) for row in board.game_board)
     if x_count > o_count:
@@ -69,7 +72,7 @@ def main() -> None:
     elif o_count > x_count:
         winner = O
     else:
-        winner = EMPTY
+        winner = EMPTY  # EMPTY means a draw here
     print(f"X has {x_count} pieces, O has {o_count} pieces.")
     if winner == EMPTY:
         print("The game is a draw.")

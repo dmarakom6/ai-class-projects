@@ -15,6 +15,9 @@ SYMBOLS = {X: "X", O: "O", EMPTY: "-"}
 
 DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
+# Piece-square table for evaluate(): corners are worth the most because they can never be
+# flipped, the squares next to them (-50, -20) are traps that hand the corner to the opponent,
+# edges are solid, the centre is nearly worthless. Only the ratios matter.
 WEIGHTS: Grid = [
     [100, -20, 10, 5, 5, 10, -20, 100],
     [-20, -50, -2, -2, -2, -2, -50, -20],
@@ -70,10 +73,12 @@ class Board:
         for dr, dc in DIRECTIONS:
             line = []
             r, c = row + dr, col + dc
+            # collect the run of opponent pieces in this direction, starting at the new piece
             while 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == -letter:
                 line.append((r, c))
                 r += dr
                 c += dc
+            # the run only counts if our own piece closes it at the far end; then flip the whole run
             if line and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == letter:
                 for flip_row, flip_col in line:
                     self.game_board[flip_row][flip_col] = letter
@@ -86,14 +91,17 @@ class Board:
 
         if 0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE and self.game_board[row][col] == EMPTY:
             for dr, dc in DIRECTIONS:
+                # the next square must hold an opponent piece: at least one to outflank
                 r, c = row + dr, col + dc
                 if not (0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == -letter):
                     continue
                 r += dr
                 c += dc
+                # skip the rest of the opponent's run
                 while 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == -letter:
                     r += dr
                     c += dc
+                # a piece of ours at the end closes the sandwich
                 if 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and self.game_board[r][c] == letter:
                     is_valid = True
                     break
@@ -106,6 +114,7 @@ class Board:
         for row in range(BOARD_SIZE):
             for col in range(BOARD_SIZE):
                 if self.is_valid_move(row, col, letter):
+                    # copy() first, so the search tree keeps parents intact while children change
                     child = self.copy()
                     child.make_move(row, col, letter)
                     children.append(child)
@@ -115,10 +124,12 @@ class Board:
         """The heuristic value of the board: positive is good for X (MAX), negative is good for O (MIN)."""
         score = 0
 
+        # a finished game is scored exactly: with cells +1/-1, the plain sum is X pieces - O pieces
         if self.is_terminal():
             for row in self.game_board:
                 score += sum(row)
             return score
+        # mid-game, weight each piece by the square it sits on
         for row in range(BOARD_SIZE):
             for col in range(BOARD_SIZE):
                 score += WEIGHTS[row][col] * self.game_board[row][col]
@@ -128,6 +139,7 @@ class Board:
         """The game is over when neither player has a valid move (for example, when the board is full)."""
         terminal_state = True
 
+        # one legal move for either side is enough to keep the game alive
         for row in range(BOARD_SIZE):
             for col in range(BOARD_SIZE):
                 if self.game_board[row][col] == EMPTY:

@@ -23,18 +23,22 @@ class Player:
     def max_value_ab(self, board: Board, depth: int, alpha: float, beta: float) -> Move:
         """The best move for MAX (X) on the board, with its value; prunes with alpha and beta."""
         self.visited_nodes += 1
+        # a leaf of the search: score the position instead of searching deeper
         if board.is_terminal() or depth == self.max_depth:
             return Move(board.last_move.row, board.last_move.col, board.evaluate())
         max_move = Move(value=-math.inf)
 
         children = board.get_children(X)
         if not children:
+            # X must pass: O plays on the same board, so no ply is spent
             return self.min_value_ab(board, depth, alpha, beta)
         for child in children:
             move = self.min_value_ab(child, depth + 1, alpha, beta)
             if move.value > max_move.value:
+                # carry the coordinates of our own move into the chosen child, with its backed-up value
                 max_move = Move(child.last_move.row, child.last_move.col, move.value)
             if max_move.value >= beta:
+                # MIN would never allow this line: searching the rest cannot change the choice
                 return max_move
             alpha = max(alpha, max_move.value)
         return max_move
@@ -48,12 +52,14 @@ class Player:
 
         children = board.get_children(O)
         if not children:
+            # O must pass: X plays on the same board
             return self.max_value_ab(board, depth, alpha, beta)
         for child in children:
             move = self.max_value_ab(child, depth + 1, alpha, beta)
             if move.value < min_move.value:
                 min_move = Move(child.last_move.row, child.last_move.col, move.value)
             if min_move.value <= alpha:
+                # MAX would never allow this line: prune the rest
                 return min_move
             beta = min(beta, min_move.value)
         return min_move
