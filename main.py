@@ -20,21 +20,34 @@ def ask_move(board: Board, letter: int) -> tuple[int, int]:
 def main() -> None:
     # fill in your code here! As the assignment asks, the program must:
     max_depth = input("Give maximum search depth (integer)")
-    human_letter = input("Type 'X' if you want to play first else 'O' ")
+    human_letter = input("Type '1' if you want to play first else '-1' ")
+    if(human_letter == '1'):
+        minimax_letter = O
+        human_letter = X
+    else:
+        minimax_letter = X
+        human_letter = O
     board = Board(None,O)
+    print(board)
     while(not board.is_terminal()):
         letter = O if board.last_player == X else X
         print(f"{SYMBOLS[letter]} plays")
         if( letter == human_letter):
-            human_choice = ask_move(board,human_letter)
-            row = human_choice[0]
-            col = human_choice[1]
+            while(True):
+                human_choice = ask_move(board,human_letter)
+                row = human_choice[0]
+                col = human_choice[1]
         else:
-            player = Player(max_depth,human_letter)
+            player = Player(int(max_depth),minimax_letter)
             move = player.alpha_beta(board)
             row =  move.row
             col = move.col
-        print(f"Move ({row}, {col}) with value {move.value}: and " f"{player.visited_nodes} boards visited.")
+            if(row == -1 and col == -1):
+                print( minimax_letter + " doesn't have any valid moves " + human_letter + "plays" )
+                board.last_move = move
+                board.last_player = minimax_letter
+                continue
+            print(f"Move ({row}, {col}) with value {move.value}: and " f"{player.visited_nodes} boards visited.")
         board.make_move(row, col, letter)
         print(board)
     

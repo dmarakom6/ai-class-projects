@@ -29,13 +29,15 @@ class Player:
 
         # fill in your code here! Remember: if X has no valid move here, X passes and O plays on the same board.
         a = alpha
+        if(not(board.get_children(X))):
+            return Move()
         for child in board.get_children(X):
             move = self.min_value_ab(child,depth+1,a,beta)
-            if ( move.score > max_move.score):
+            if ( move.value > max_move.value):
                 max_move = move
-            if( max_move.score >= beta):
+            if( max_move.value >= beta):
                 return max_move
-            a = max(max_move.score,alpha)
+            a = max(max_move.value,alpha)
         return max_move
 
     def min_value_ab(self, board: Board, depth: int, alpha: float, beta: float) -> Move:
@@ -47,11 +49,13 @@ class Player:
 
         # fill in your code here! Remember: if O has no valid move here, O passes and X plays on the same board.
         b = beta
+        if(not(board.get_children(O))):
+            return Move()
         for child in board.get_children(O):
             move = self.max_value_ab(child,depth+1,alpha,b)
-            if ( move.score < min_move.score):
+            if ( move.value < min_move.value):
                 min_move = move
-            if( min_move.score <= alpha):
+            if( min_move.value <= alpha):
                 return min_move
-            b = min(min_move,beta)
+            b = min(min_move.value,beta)
         return min_move

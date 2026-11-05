@@ -84,33 +84,44 @@ class Board:
         is_valid = False
 
         # fill in your code here!
-        move_outflanks = False
-        if( letter == X ): opponent_letter = O # find opponent letter
+        if( letter == X ): 
+            opponent_letter = O # find opponent letter
         else:
             opponent_letter = X
 
-        directions = [(-1, -1),(-1, 0),(-1, 1),(0, -1),(0, 1),(1, -1), (1, 0), (1, 1)]
-        for directionRow, directionCol in directions: # for each direction we are going to go,
-            r = row + directionRow   # go to that direction till you see invalid coordinates, empty space or our letter
-            c = col + directionCol # if the search stopped because we found our letter that is a successfull flip ( valid move)
-            while( (0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE) and (self.game_board[r][c] == opponent_letter)):
-                r += directionRow
-                c += directionCol
-            if((0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE) and (self.game_board[r][c] == letter)):
-                move_outflanks = True # we do at least 1 flip, its a valid move.
-                break
-    
         is_neighbour_of_opponent_disc = False
-        for row in range(0,BOARD_SIZE): # for each cell on then board
-            for col in range(0,BOARD_SIZE):
-                if(self.game_board[row][col] == opponent_letter): # check the ones which have opponent letter
-                    for directionRow,directionCol in directions: # check their neighbouring cells
-                        r = row + directionRow # check if our (row,col) choice is a neighbour of this cell
-                        c = col + directionCol
-                        if( row == r and col == c ):
-                            is_neighbour_of_opponent_disc = True
+        move_outflanks = False
+        if(self.game_board[row][col] == EMPTY and (0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE)):
 
+<<<<<<< Updated upstream
         is_valid = move_outflanks and self.game_board[row][col] == EMPTY and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and is_neighbour_of_opponent_disc  
+=======
+<<<<<<< HEAD
+            directions = [(-1, -1),(-1, 0),(-1, 1),(0, -1),(0, 1),(1, -1), (1, 0), (1, 1)]
+            for directionRow, directionCol in directions: # for each direction we are going to go,
+                r = row + directionRow   # go to that direction till you see invalid coordinates, empty space or our letter
+                c = col + directionCol # if the search stopped because we found our letter that is a successfull flip ( valid move)
+                while( (0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE) and (self.game_board[r][c] == opponent_letter)):
+                    r += directionRow
+                    c += directionCol
+                if( (0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE) and (self.game_board[r][c] == letter)):
+                    move_outflanks = True # we do at least 1 flip, its a valid move.
+                    break
+        
+            for r in range(0,BOARD_SIZE): # for each cell on the board
+                for c in range(0,BOARD_SIZE):
+                    if(self.game_board[r][c] == opponent_letter): # check the ones which have opponent letter
+                        for directionRow,directionCol in directions: # check their neighbouring cells
+                            r2 = r + directionRow # check if our (row,col) choice is a neighbour of this cell
+                            c2 = c + directionCol
+                            if( row == r2 and col == c2 ):
+                                is_neighbour_of_opponent_disc = True
+
+        is_valid = is_neighbour_of_opponent_disc and move_outflanks
+=======
+        is_valid = move_outflanks and self.game_board[row][col] == EMPTY and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and is_neighbour_of_opponent_disc  
+>>>>>>> 249d7eafdef6474b7150e4c51e3a328bddf739aa
+>>>>>>> Stashed changes
         return is_valid
 
     def get_children(self, letter: int) -> list[Board]:
@@ -118,14 +129,10 @@ class Board:
         children = []
 
         # fill in your code here!
-        if( letter == X ): opponent_letter = O # find opponent letter
-        else:
-            opponent_letter = X
-        directions = [(-1, -1),(-1, 0),(-1, 1),(0, -1),(0, 1),(1, -1), (1, 0), (1, 1)]
         for row in range(0,BOARD_SIZE): # for each cell on then board
             for col in range(0,BOARD_SIZE):
                 if(self.is_valid_move(row,col,letter)):
-                    child = self.copy(self)
+                    child = self.copy()
                     child.make_move(row,col,letter)
                     children.append(child)
         return children
@@ -188,11 +195,11 @@ class Board:
 
     def is_terminal(self) -> bool:
         """The game is over when neither player has a valid move (for example, when the board is full)."""
-        terminal_state = False
+        terminal_state = True
 
         # fill in your code here!
         for row in range(0,BOARD_SIZE):
             for col in range(0,BOARD_SIZE):
-                terminal_state = terminal_state or ((self.is_valid_move(row,col,X)) or self.is_valid_move(row,col,O))
-
+                if(self.is_valid_move(row,col,X) or self.is_valid_move(row,col,O)):
+                    terminal_state = False
         return terminal_state
