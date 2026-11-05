@@ -93,10 +93,7 @@ class Board:
         move_outflanks = False
         if(self.game_board[row][col] == EMPTY and (0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE)):
 
-<<<<<<< Updated upstream
-        is_valid = move_outflanks and self.game_board[row][col] == EMPTY and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and is_neighbour_of_opponent_disc  
-=======
-<<<<<<< HEAD
+            is_valid = move_outflanks and self.game_board[row][col] == EMPTY and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and is_neighbour_of_opponent_disc  
             directions = [(-1, -1),(-1, 0),(-1, 1),(0, -1),(0, 1),(1, -1), (1, 0), (1, 1)]
             for directionRow, directionCol in directions: # for each direction we are going to go,
                 r = row + directionRow   # go to that direction till you see invalid coordinates, empty space or our letter
@@ -118,10 +115,6 @@ class Board:
                                 is_neighbour_of_opponent_disc = True
 
         is_valid = is_neighbour_of_opponent_disc and move_outflanks
-=======
-        is_valid = move_outflanks and self.game_board[row][col] == EMPTY and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and is_neighbour_of_opponent_disc  
->>>>>>> 249d7eafdef6474b7150e4c51e3a328bddf739aa
->>>>>>> Stashed changes
         return is_valid
 
     def get_children(self, letter: int) -> list[Board]:
