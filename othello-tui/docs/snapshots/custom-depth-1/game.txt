@@ -1,0 +1,65 @@
+custom heuristic: disks + 3*corners + 2*edges - depth 1 - O wins 15:48
+total search time: 0.0s
+
+  1  X plays 2 3   nodes=5  0.00s  eval=+3
+  2  O plays 2 2   nodes=4  0.00s  eval=+0
+  3  X plays 2 1   nodes=5  0.00s  eval=+3
+  4  O plays 1 1   nodes=7  0.00s  eval=+0
+  5  X plays 0 1   nodes=5  0.00s  eval=+5
+  6  O plays 0 0   nodes=8  0.00s  eval=-1
+  7  X plays 3 2   nodes=4  0.00s  eval=+2
+  8  O plays 0 2   nodes=6  0.00s  eval=-7
+  9  X plays 1 2   nodes=5  0.00s  eval=-4
+ 10  O plays 4 2   nodes=6  0.00s  eval=-13
+ 11  X plays 5 4   nodes=9  0.00s  eval=-6
+ 12  O plays 4 5   nodes=7  0.00s  eval=-15
+ 13  X plays 2 4   nodes=11  0.00s  eval=-6
+ 14  O plays 1 0   nodes=10  0.00s  eval=-13
+ 15  X plays 4 1   nodes=10  0.00s  eval=-6
+ 16  O plays 4 0   nodes=7  0.00s  eval=-17
+ 17  X plays 2 0   nodes=9  0.00s  eval=-12
+ 18  O plays 3 0   nodes=10  0.00s  eval=-23
+ 19  X plays 5 0   nodes=8  0.00s  eval=-18
+ 20  O plays 6 0   nodes=10  0.00s  eval=-27
+ 21  X plays 4 6   nodes=8  0.00s  eval=-18
+ 22  O plays 4 7   nodes=8  0.00s  eval=-33
+ 23  X plays 5 2   nodes=7  0.00s  eval=-28
+ 24  O plays 1 4   nodes=7  0.00s  eval=-37
+ 25  X plays 0 4   nodes=9  0.00s  eval=-26
+ 26  O plays 5 5   nodes=9  0.00s  eval=-33
+ 27  X plays 1 3   nodes=5  0.00s  eval=-28
+ 28  O plays 3 5   nodes=10  0.00s  eval=-37
+ 29  X plays 5 6   nodes=7  0.00s  eval=-30
+ 30  O plays 6 7   nodes=11  0.00s  eval=-41
+ 31  X plays 0 3   nodes=8  0.00s  eval=-32
+ 32  O plays 0 5   nodes=11  0.00s  eval=-51
+ 33  X plays 5 7   nodes=7  0.00s  eval=-40
+ 34  O plays 6 5   nodes=11  0.00s  eval=-49
+ 35  X plays 5 3   nodes=10  0.00s  eval=-38
+ 36  O plays 6 3   nodes=8  0.00s  eval=-49
+ 37  X plays 7 3   nodes=11  0.00s  eval=-36
+ 38  O plays 2 5   nodes=6  0.00s  eval=-43
+ 39  X plays 1 5   nodes=15  0.00s  eval=-32
+ 40  O plays 1 6   nodes=7  0.00s  eval=-41
+ 41  X plays 0 7   nodes=14  0.00s  eval=-31
+ 42  O plays 3 6   nodes=9  0.00s  eval=-42
+ 43  X plays 7 7   nodes=13  0.00s  eval=-32
+ 44  O plays 6 6   nodes=8  0.00s  eval=-41
+ 45  X plays 6 4   nodes=11  0.00s  eval=-30
+ 46  O plays 7 4   nodes=9  0.00s  eval=-47
+ 47  X plays 3 7   nodes=9  0.00s  eval=-32
+ 48  O plays 7 2   nodes=7  0.00s  eval=-41
+ 49  X plays 3 1   nodes=9  0.00s  eval=-30
+ 50  O plays 7 5   nodes=8  0.00s  eval=-41
+ 51  X plays 6 2   nodes=6  0.00s  eval=-26
+ 52  O plays 5 1   nodes=7  0.00s  eval=-37
+ 53  X plays 7 1   nodes=3  0.00s  eval=-30
+ 54  O plays 7 0   nodes=6  0.00s  eval=-40
+ 55  X plays 6 1   nodes=2  0.00s  eval=-37
+ 56  O plays 2 6   nodes=5  0.00s  eval=-50
+ 57  X plays 2 7   nodes=2  0.00s  eval=-41
+ 58  O plays 7 6   nodes=4  0.00s  eval=-54
+     X passes
+ 59  O plays 0 6   nodes=3  0.00s  eval=-59
+
+result: O wins (X 15 : O 48) after 59 moves, 1 passes

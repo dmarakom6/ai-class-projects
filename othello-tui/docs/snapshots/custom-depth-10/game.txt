@@ -1,0 +1,65 @@
+custom heuristic: disks + 3*corners + 2*edges - depth 10 - X wins 44:20
+total search time: 1987.6s
+
+  1  X plays 2 3   nodes=102930  2.00s  eval=+3
+  2  O plays 2 2   nodes=83752  1.52s  eval=+0
+  3  X plays 2 1   nodes=153461  2.50s  eval=+3
+  4  O plays 2 4   nodes=282775  5.22s  eval=+0
+  5  X plays 2 5   nodes=234244  3.39s  eval=+5
+  6  O plays 1 4   nodes=559152  10.34s  eval=+0
+  7  X plays 5 5   nodes=636002  8.67s  eval=+5
+  8  O plays 2 0   nodes=711670  13.31s  eval=-4
+  9  X plays 0 4   nodes=982230  14.21s  eval=+5
+ 10  O plays 4 5   nodes=862551  13.97s  eval=+2
+ 11  X plays 3 5   nodes=1930091  27.16s  eval=+7
+ 12  O plays 5 3   nodes=1132229  18.41s  eval=+2
+ 13  X plays 1 1   nodes=1394499  22.43s  eval=+7
+ 14  O plays 1 6   nodes=1740156  26.67s  eval=+2
+ 15  X plays 1 2   nodes=2550907  40.57s  eval=+7
+ 16  O plays 1 3   nodes=1944986  27.79s  eval=+2
+ 17  X plays 4 2   nodes=2381682  35.00s  eval=+7
+ 18  O plays 0 2   nodes=3818021  60.54s  eval=+2
+ 19  X plays 0 0   nodes=3617184  49.27s  eval=+8
+ 20  O plays 5 2   nodes=3807266  58.16s  eval=+3
+ 21  X plays 6 2   nodes=7119537  94.91s  eval=+8
+ 22  O plays 4 6   nodes=4122202  71.99s  eval=-1
+ 23  X plays 0 7   nodes=7625127  99.67s  eval=+11
+ 24  O plays 5 1   nodes=7637450  128.21s  eval=+6
+ 25  X plays 4 7   nodes=15103488  203.46s  eval=+15
+ 26  O plays 7 1   nodes=7807516  135.14s  eval=+6
+ 27  X plays 3 2   nodes=5679588  82.23s  eval=+13
+ 28  O plays 5 4   nodes=3922417  51.88s  eval=+8
+ 29  X plays 6 3   nodes=7541016  99.29s  eval=+15
+ 30  O plays 5 6   nodes=7525352  99.99s  eval=+6
+ 31  X plays 1 0   nodes=6935797  106.26s  eval=+13
+ 32  O plays 7 2   nodes=4920764  55.07s  eval=+8
+ 33  X plays 6 4   nodes=2902713  45.67s  eval=+17
+ 34  O plays 3 1   nodes=4112318  46.48s  eval=+8
+ 35  X plays 3 0   nodes=4061635  56.50s  eval=+17
+ 36  O plays 7 5   nodes=3235853  35.61s  eval=+8
+ 37  X plays 4 0   nodes=2769187  37.84s  eval=+17
+ 38  O plays 6 5   nodes=1918665  20.84s  eval=+8
+ 39  X plays 3 6   nodes=2512214  30.41s  eval=+17
+ 40  O plays 2 7   nodes=1096906  11.36s  eval=+12
+ 41  X plays 2 6   nodes=1509779  18.73s  eval=+15
+ 42  O plays 0 5   nodes=389164  3.91s  eval=+10
+ 43  X plays 0 6   nodes=378706  4.49s  eval=+21
+ 44  O plays 5 7   nodes=224774  2.24s  eval=+14
+ 45  X plays 6 7   nodes=199534  2.30s  eval=+27
+ 46  O plays 1 5   nodes=65010  0.65s  eval=+24
+ 47  X plays 4 1   nodes=84653  0.86s  eval=+29
+ 48  O plays 0 3   nodes=19274  0.18s  eval=+16
+ 49  X plays 0 1   nodes=11433  0.12s  eval=+31
+ 50  O plays 5 0   nodes=8946  0.08s  eval=+24
+ 51  X plays 6 0   nodes=6447  0.06s  eval=+35
+ 52  O plays 6 6   nodes=2390  0.02s  eval=+32
+ 53  X plays 7 7   nodes=987  0.01s  eval=+40
+ 54  O plays 7 6   nodes=479  0.00s  eval=+35
+ 55  X plays 3 7   nodes=192  0.00s  eval=+40
+ 56  O plays 1 7   nodes=43  0.00s  eval=+33
+ 57  X plays 7 4   nodes=27  0.00s  eval=+62
+ 58  O plays 7 3   nodes=12  0.00s  eval=+57
+ 59  X plays 7 0   nodes=5  0.00s  eval=+79
+ 60  O plays 6 1   nodes=2  0.00s  eval=+76
+
+result: X wins (X 44 : O 20) after 60 moves, 0 passes
