@@ -46,7 +46,9 @@ class Board:
         # very important: keep our own copy of the grid, so that playing on a child never changes its parent.
         self.game_board = [row[:] for row in game_board]
         # who played last, i.e. whose move resulted in this board. Even a new board has one: it tells us
-        # who plays first. A new board says that O played last, so X plays first.
+        # who plays first. A new board says that O played last, so X plays first. A pass is not a move,
+        # so a passing player cannot record it here: whoever drives the game (main() or another loop)
+        # must move the turn on when a player passes, otherwise the same player is asked to move twice.
         self.last_player = last_player
         # the move that led to this board (no move yet for a new board).
         self.last_move = Move()
@@ -57,10 +59,15 @@ class Board:
         return board
 
     def __str__(self) -> str:
+        label_width = len(str(BOARD_SIZE - 1))  # room for the widest row number
         # each row is "* " + BOARD_SIZE symbols with spaces between them + " *", so 2 * BOARD_SIZE + 3 characters.
-        border = "*" * (2 * BOARD_SIZE + 3)
-        rows = ("* " + " ".join(SYMBOLS[cell] for cell in row) + " *" for row in self.game_board)
-        return "\n".join([border, *rows, border])
+        border = " " * (label_width + 1) + "*" * (2 * BOARD_SIZE + 3)
+        columns = " " * (label_width + 3) + " ".join(str(col) for col in range(BOARD_SIZE))
+        rows = (
+            f"{row:>{label_width}} " + "* " + " ".join(SYMBOLS[cell] for cell in self.game_board[row]) + " *"
+            for row in range(BOARD_SIZE)
+        )
+        return "\n".join([columns, border, *rows, border])
 
     def make_move(self, row: int, col: int, letter: int) -> None:
         """Place a piece of letter at (row, col), flip the opponent's pieces it outflanks, remember the move."""
@@ -68,6 +75,10 @@ class Board:
         # player must pass instead. Without this check, Python's negative indices would fill a wrong square.
         if not (0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE):
             raise ValueError(f"({row}, {col}) is not on the board; a player with no valid move must pass.")
+        # a move that is not valid means a bug somewhere else (e.g. a search that answered for the wrong
+        # player). Refuse it here: without this check an illegal move is played silently
+        if not self.is_valid_move(row, col, letter):
+            raise ValueError(f"({row}, {col}) is not a legal move for {SYMBOLS[letter]}.")
         self.game_board[row][col] = letter
 
         for dr, dc in DIRECTIONS:
@@ -108,7 +119,7 @@ class Board:
         return is_valid
 
     def get_children(self, letter: int) -> list[Board]:
-        """One child board for every valid move of letter."""
+        """One child board for every valid move of letter, most attractive squares first.""" # Which is why we use -WEIGHTS in the lamba function below.
         children = []
 
         for row in range(BOARD_SIZE):
@@ -118,6 +129,10 @@ class Board:
                     child = self.copy()
                     child.make_move(row, col, letter)
                     children.append(child)
+        # alpha-beta prunes far more when the best moves come first: the table says how much a
+        # square is worth to whoever sits on it, so both players want the high-weight squares
+        # first (corners and edges before the traps next to the corners).
+        children.sort(key=lambda child: -WEIGHTS[child.last_move.row][child.last_move.col])
         return children
 
     def evaluate(self) -> int:

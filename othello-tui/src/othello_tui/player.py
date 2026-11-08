@@ -13,7 +13,11 @@ class Player:
         self.visited_nodes = 0  # boards visited by the last search.
 
     def alpha_beta(self, board: Board) -> Move:
-        """The best move for this player on the board, according to minimax with alpha-beta pruning."""
+        """The best move for this player on the board, according to minimax with alpha-beta pruning.
+
+        Returns Move(-1, -1) when this player has no legal move and must pass: no move exists, and
+        the caller must not play anything - a pass is not a move. Call this only on this player's
+        turn: a search always answers for self.player_letter, never for whoever is to move."""
         self.visited_nodes = 0
         # no bounds yet: alpha starts at -infinity and beta at +infinity.
         if self.player_letter == X:
@@ -30,8 +34,11 @@ class Player:
 
         children = board.get_children(X)
         if not children:
-            # X must pass: O plays on the same board, so no ply is spent
-            return self.min_value_ab(board, depth, alpha, beta)
+            # X must pass: O plays on the same board, so no ply is spent. The value is O's best
+            # play, but the coordinates stay (-1, -1), "no move": the caller must never mistake
+            # O's move for X's - playing it as X is what corrupts the game.
+            passed = self.min_value_ab(board, depth, alpha, beta)
+            return Move(-1, -1, passed.value)
         for child in children:
             move = self.min_value_ab(child, depth + 1, alpha, beta)
             if move.value > max_move.value:
@@ -52,8 +59,10 @@ class Player:
 
         children = board.get_children(O)
         if not children:
-            # O must pass: X plays on the same board
-            return self.max_value_ab(board, depth, alpha, beta)
+            # O must pass: X plays on the same board. Same contract as in max_value_ab: the value
+            # is X's best play, the coordinates stay (-1, -1), "no move".
+            passed = self.max_value_ab(board, depth, alpha, beta)
+            return Move(-1, -1, passed.value) # This fixes a bug where if the player has no valid moves to make, he makes a move with the opponent's chosen coords!
         for child in children:
             move = self.max_value_ab(child, depth + 1, alpha, beta)
             if move.value < min_move.value:
